@@ -48,4 +48,3 @@ swift test
 See [PROGRESS.md](PROGRESS.md).
 
 **Last updated:** 2026-08-04
-
