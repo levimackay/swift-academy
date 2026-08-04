@@ -75,24 +75,24 @@ import SwiftUI
 //    protocol. Mixing the two mechanisms is the most common thing an old
 //    tutorial will make you do.
 //
-// struct BasketScreen: View {
-//     @StateObject private var basket = Basket()
-//     var body: some View { Text("\(basket.itemCount)") }
+// struct CartScreen: View {
+//     @StateObject private var cart = Cart()
+//     var body: some View { Text("\(cart.itemCount)") }
 // }
 //
-// error: generic struct 'StateObject' requires that 'Basket' conform to
+// error: generic struct 'StateObject' requires that 'Cart' conform to
 // 'ObservableObject'
 
 @Observable
-final class Basket {
+final class Cart {
     var itemCount = 0
 }
 
 // 6. UI state is main actor isolated, and that isolation is checked at every
 //    call site rather than asserted in a comment.
 //
-// nonisolated func summary(of cart: Cart) -> String {
-//     "total is \(cart.total)"
+// nonisolated func summary(of till: Till) -> String {
+//     "total is \(till.total)"
 // }
 //
 // error: main actor-isolated property 'total' can not be referenced from a
@@ -100,7 +100,7 @@ final class Basket {
 
 @Observable
 @MainActor
-final class Cart {
+final class Till {
     var total = 0
 }
 

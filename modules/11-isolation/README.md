@@ -30,12 +30,11 @@ answer you can debug. It is undefined behavior: a torn read, a crash three
 functions away, a suite that is green on your machine and red once a month in
 production.
 
-Every other mainstream language treats that as a discipline problem. Hold the
-right lock, document the threading contract, review carefully. Swift 6 treats
-it as a type problem, and refuses to build a program where the race is
-possible. The trade buys you a whole class of bug you will never ship. It
-costs you diagnostics that read like a legal filing, and learning to read
-them is most of this chapter.
+Every other mainstream language treats that as a discipline problem: hold the
+right lock, document the contract, review carefully. Swift 6 treats it as a
+type problem and refuses to build a program where the race is possible. That
+buys a whole class of bug you will never ship, and costs you diagnostics that
+read like a legal filing. Learning to read them is most of this chapter.
 
 ## Swift's answer
 
@@ -43,13 +42,15 @@ Three ideas, in the order the compiler applies them.
 
 **`Sendable` is the type level claim that a value is safe to hand to another
 isolation domain.** It is a marker protocol with no requirements, so nothing
-is implemented to conform. A struct or enum whose stored parts are all
-`Sendable` gets it for free, because handing over a copy shares no storage.
-That is the concurrency dividend chapter 03 promised for value semantics.
+is implemented to conform. A non public struct or enum whose stored parts are
+all `Sendable` gets it for free, because handing over a copy shares no
+storage. That is the concurrency dividend chapter 03 promised for value
+semantics. Inference stops at the module boundary, so a `public` type states
+the conformance itself, which is why `ShipmentManifest` spells it out loud.
 
 ```swift
-struct Waybill: Sendable { var stops: [String]; var weight: Int }  // free
-final class Tripmeter { var miles = 0 }                             // never
+struct Waybill: Sendable { var legs: [String]; var weight: Int }  // free
+final class Tripmeter { var miles = 0 }                            // never
 ```
 
 A class is the opposite case. Two references to one `Tripmeter` are two names
@@ -67,9 +68,9 @@ guarantees serial access.
 ```swift
 actor Vault {
     var balance = 0
-    nonisolated let code: String
+    nonisolated let serial: String
 
-    init(code: String) { self.code = code }
+    init(serial: String) { self.serial = serial }
 
     func deposit(_ amount: Int) { balance += amount }
     func peek() -> Int { balance }
@@ -78,7 +79,7 @@ actor Vault {
 
 Inside the actor, `deposit` and `peek` are ordinary synchronous calls, because
 you are already in the domain. Outside, they are `await`ed, and the `await` is
-the hop into it. `code` is `nonisolated`: it can never change, so protecting
+the hop into it. `serial` is `nonisolated`: it can never change, so protecting
 it serializes nothing. Actors are implicitly `Sendable`, so passing one around
 is free.
 

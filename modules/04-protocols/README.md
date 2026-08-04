@@ -32,7 +32,7 @@ every one of them, and the compiler checks the whole promise at the
 conformance site.
 
 ```swift
-protocol Gauge {
+protocol Readout {
     var level: Double { get }
     var unitSymbol: String { get }
 }
@@ -44,17 +44,17 @@ oriented. A default satisfies a requirement, so a conforming type only writes
 what is genuinely its own.
 
 ```swift
-extension Gauge {
+extension Readout {
     var unitSymbol: String { "raw" }
     var isDrained: Bool { level == 0 }
 }
 
-struct Barometer: Gauge {
+struct Barometer: Readout {
     var level: Double
     var unitSymbol: String { "hPa" }
 }
 
-struct Odometer: Gauge {
+struct Odometer: Readout {
     var level: Double
 }
 ```
@@ -67,29 +67,29 @@ An extension can carry a constraint, which is how one protocol grows behavior
 that only some conformers can support.
 
 ```swift
-extension Gauge where Self: Comparable {
+extension Readout where Self: Comparable {
     func exceeds(_ other: Self) -> Bool { self > other }
 }
 ```
 
 A conformance can carry a constraint too. Conditional conformance is the
-statement that a generic type is a `Gauge` exactly when its parameter is.
+statement that a generic type is a `Readout` exactly when its parameter is.
 
 ```swift
 struct Bank<Instrument> {
     var instruments: [Instrument]
 }
 
-extension Bank: Gauge where Instrument: Gauge {
+extension Bank: Readout where Instrument: Readout {
     var level: Double { instruments.reduce(0) { $0 + $1.level } }
 }
 ```
 
 An extension can also conform a type you did not write. `Double` is not yours
-and `Gauge` is, so this is fine and needs no ceremony.
+and `Readout` is, so this is fine and needs no ceremony.
 
 ```swift
-extension Double: Gauge {
+extension Double: Readout {
     var level: Double { self }
 }
 ```
@@ -105,14 +105,14 @@ witness table and the conforming type's version always wins. `isDrained`
 exists only in the extension, so it is resolved from the static type at the
 call site. A type that declares its own `isDrained` without adding it to the
 protocol gets its version on a concrete value and the extension's version
-through `any Gauge`. Nothing warns.
+through `any Readout`. Nothing warns.
 
 ```bash
 make probe CH=04 P=dispatch
 ```
 
-Existentials are spelled out loud. `any Gauge` is a box, `some Gauge` and
-`<T: Gauge>` are not, and every target in this package enables
+Existentials are spelled out loud. `any Readout` is a box, `some Readout` and
+`<T: Readout>` are not, and every target in this package enables
 `ExistentialAny` so the choice is compiler enforced rather than advisory. The
 full treatment is [07-generics](../07-generics/README.md); here, prefer the
 constraint and reach for `any` only when the values must be heterogeneous.
@@ -120,8 +120,8 @@ constraint and reach for `any` only when the values must be heterogeneous.
 ## Predict
 
 Write your prediction in the comment above each snippet in
-`probes/predict.swift`, then run `make probe CH=04 P=predict`. Seven values
-are printed and exactly one of them changes when the value is held as an
+`probes/predict.swift`, then run `make probe CH=04 P=predict`. Three snippets
+print, and exactly one printed value changes when the value is held as an
 existential rather than as itself. Finding which one is the chapter.
 
 ```bash
@@ -159,8 +159,8 @@ that asymmetry is the single most expensive thing on this page. Verified in
 |---|---|---|
 | default member dispatch | virtual, the type's version wins | static, the extension's version wins through a box |
 | retrofitting an interface | impossible after the fact | an `extension` on any type, in any module |
-| conditional conformance | no equivalent, a type implements or does not | `extension Bank: Gauge where Instrument: Gauge` |
-| associated types and `Self` | inexpressible | ordinary, and they constrain what a box can do |
+| conditional conformance | no equivalent, a type implements or does not | `extension Bank: Readout where Instrument: Readout` |
+| associated types and `Self` | only through a self referential type parameter, `interface IShape<T> where T : IShape<T>` | a first class `associatedtype` and `Self`, no extra parameter |
 | culture | default members are a versioning escape hatch | protocol extensions are the primary mechanism |
 
 Full row set: [docs/bridge.md](../../docs/bridge.md).
@@ -259,12 +259,12 @@ Nothing here has a committed answer.
 1. A protocol declares `var name: String { get }`. A conforming struct
    declares `var name: String` as a stored `var`. Does that satisfy a `get`
    only requirement, and does the reverse hold?
-2. Move `isDrained` from the extension into the `Gauge` protocol body and
-   predict which of the four lines in `probes/dispatch.swift` change.
-3. `extension Array: Gauge where Element: Gauge`. Predict whether
-   `[[Barometer]]` is a `Gauge`, and say why in one sentence.
-4. Predict `MemoryLayout<any Gauge>.size` and
-   `MemoryLayout<any Gauge & Comparable>.size`, then check with
+2. Uncomment the last line of `probes/dispatch.swift` so `caption` becomes a
+   requirement, and predict which of the five dispatch lines it prints change.
+3. `extension Array: Readout where Element: Readout`. Predict whether
+   `[[Barometer]]` is a `Readout`, and say why in one sentence.
+4. Predict `MemoryLayout<any Readout>.size` and
+   `MemoryLayout<any Readout & Comparable>.size`, then check with
    `probes/layout.swift`.
 5. Judgment, no single right answer. You need three types to share both
    behavior and stored state. Argue for a protocol with an extension against a
@@ -290,7 +290,7 @@ Not required to advance. Skipping all of it costs you nothing.
 - [ ] No `class` and no inheritance survives in my solutions:
       `grep -nE '\bclass\b' modules/04-protocols/exercises/*.swift` prints nothing
 
-`some` and `any`, associated types, and generic types with constraints are
-chapter [07-generics](../07-generics/README.md). This chapter used `any` in
-two places because `ExistentialAny` makes the spelling mandatory, and left the
-cost model there.
+`some` in return position, associated types, and generic types with
+constraints are chapter [07-generics](../07-generics/README.md). This chapter
+measured what the box costs; chapter 07 is where you learn when you can stop
+paying for it.

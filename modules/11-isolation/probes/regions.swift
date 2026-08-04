@@ -76,6 +76,9 @@ func sendMergedRegion() async -> Int {
 //
 // error: sending value of non-Sendable type '() async -> Int' risks causing
 // data races [#SendingRisksDataRace]
+// note: Passing value of non-Sendable type '() async -> Int' as a 'sending'
+// argument to initializer 'init(name:priority:operation:)' risks causing
+// races in between local and caller code
 // note: access can happen concurrently
 
 print("fresh:", await sendFresh())

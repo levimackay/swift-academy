@@ -36,7 +36,8 @@ swift test --package-path drills --filter Ch12
 
 ## The question
 
-A screen is a function of state, which chapter 13 settled. An app is three
+A screen is a function of state, which
+[13-swiftui-state](../13-swiftui-state/README.md) settled. An app is three
 further questions, and each has a cheap answer that survives until the app
 gets real. Where am I, answered with a boolean per destination. Where did this
 data come from, answered with a singleton the view grabs. Where does it live
@@ -54,7 +55,7 @@ returns scenes, and a scene is a window's worth of content with a lifecycle.
 ```swift
 @main
 struct FieldNotesApp: App {
-    @State private var shell = Shell()
+    @State private var shell = Shell(publish: PublishService.live)
     @Environment(\.scenePhase) private var phase
 
     var body: some Scene {
@@ -184,34 +185,13 @@ SwiftData backed type and an in memory one both make sense. `@Environment`
 carries a value down a subtree many views read.
 
 The C# reflex is a protocol per dependency and a container that resolves them
-at startup. Do not bring it. A container turns a compile time error into a run
-time one, and thirty interfaces with one implementation each are thirty files
-that exist so a framework can find them.
+at startup. Do not bring it; Coming from C# below says why.
 
-## MVVM, and what is actually true in 2026
-
-What survives from MVVM is correct: a model type separate from the view,
-holding the state and the rules, testable without a screen. Every exercise
-here is that type.
-
-What does not follow is one view model per view. Where the view is already a
-value recomputed from state, a per view class forwarding six properties buys
-nothing, and it is a layer you keep in sync.
-
-`ObservableObject`, `@Published`, `@StateObject`, and `@ObservedObject` are
-the Combine era mechanism for the same job. They compile, they invalidate
-every reader of the object when any published property changes, and they are
-in every tutorial older than iOS 17 and in most existing codebases.
-Recognising them is a job requirement; writing new ones is not.
-[docs/legacy-swift.md](../../docs/legacy-swift.md) is the full account.
-
-Here is the paragraph, for when you are asked out loud. I keep state in
-`@Observable` `@MainActor` model types that own their own rules, and views own
-only the state nobody else needs, in `@State`. I do not write a view model per
-view, because the view is already a function of state and the extra layer
-mostly forwards. What I keep from MVVM is the separation: the model is
-testable with no screen. In a codebase already on `ObservableObject` I match
-the local style, because a half converted codebase is worse than either one.
+What survives from MVVM is exactly this shape: a model type separate from the
+view, owning the state and the rules, testable without a screen. What does not
+follow is one view model per view, and the Combine era spelling of the same
+job is [docs/legacy-swift.md](../../docs/legacy-swift.md) section 1, which
+also carries the answer to say out loud when you are asked.
 
 ## Accessibility, which is a requirement
 
@@ -219,9 +199,11 @@ A row that draws three views is three things VoiceOver reads separately, in
 whatever order the layout produced.
 
 ```swift
+let sighting = Sighting(caption: "kestrel", spottedAt: .now)
+
 SightingRow(sighting: sighting)
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel(RowLabel.spoken(for: stored, dueInDays: 2))
+    .accessibilityLabel(RowSpeech.sentence(for: sighting))
 ```
 
 Three habits carry most of it. Compose one label per row. Use the semantic
@@ -254,9 +236,9 @@ make probe CH=14 P=predict
 
 | C# | Swift | Note |
 |---|---|---|
-| a container resolves dependencies at startup | you pass them, or read `@Environment` | a miss is a compile error, not a startup one |
-| LINQ builds an `Expression` tree at run time | `#Predicate` is built at compile time | a bad predicate does not compile |
-| a `ViewModel` per view, on `INotifyPropertyChanged` | one `@Observable` model, `@State` for the rest | see the MVVM section |
+| a container resolves dependencies at startup | you pass them, or read `@Environment` | a parameter is checked by the compiler; a missing `@Environment` traps at run time |
+| LINQ type checks the lambda, then the provider translates it | `#Predicate` restricts the closure, then SwiftData translates it | both catch more at compile time and still fail at fetch time on what the store cannot translate |
+| a `ViewModel` per view, on `INotifyPropertyChanged` | one `@Observable` model, `@State` for the rest | see [docs/legacy-swift.md](../../docs/legacy-swift.md) |
 | navigation is a `Frame` and a route table | navigation is a value you own | Python: no analogue |
 
 A container exists because C# resolves dependencies by type at run time and

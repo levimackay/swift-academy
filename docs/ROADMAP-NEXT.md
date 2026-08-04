@@ -316,6 +316,56 @@ are years old, and the curriculum never has the learner open one.
 
 ---
 
+### 16. Chapter 14's four non template sections
+
+Chapter 14 carries four sections the template in
+[how-this-repo-works.md](how-this-repo-works.md) section 5 does not have:
+"Before you start", "Persistence, and the paragraph nobody writes", "The
+seam", and "Accessibility, which is a requirement". The review pass on
+2026-08-04 removed the fifth ("MVVM, and what is actually true in 2026", now
+[legacy-swift.md](legacy-swift.md) section 1) and brought the chapter back
+under the 1800 word cap, but the section order is still not the fixed one.
+
+The law's own remedy is fold or split, and the honest answer is the split
+already specified as item 7 above: navigation in one chapter, dependencies and
+persistence in the next. Folding the four into the seven template sections
+without splitting would push the chapter back over the cap.
+
+**Effort.** Nothing extra beyond item 7. If item 7 is rejected, folding the
+four sections inside the current chapter is 4 to 6 authoring hours and needs a
+matching cut of about 250 words elsewhere.
+
+### 17. Generic property names shared between lesson samples and exercise stubs
+
+[how-this-repo-works.md](how-this-repo-works.md) section 7.1 bans a lesson
+sample from sharing a **function, type, or property** name with any exercise
+stub in any chapter, and says generic nouns are not exempt. Every type and
+function overlap was removed on 2026-08-04 and that half of the scan now
+reports zero. Six single word property overlaps remain in README samples:
+
+| Where | Name | Also an exercise stub in |
+|---|---|---|
+| `06-collections/README.md:127` | `stock` | 03 |
+| `06-collections/README.md:153` | `name` | 09, 10 |
+| `09-codable/README.md:46, 62, 81` | `title` | 10, 13, 14 |
+| `09-codable/README.md:51` | `show` | 11 |
+
+Probe files add roughly forty more of the same shape (`name`, `title`,
+`count`, `label`, `value`, `index`).
+
+None of these leaks an answer: the rule exists to stop a sample that shares a
+*type* and a property with a stub, which is the answer under another name, and
+no such pair survives. The open question is whether the rule should be
+narrowed to type name overlaps and type plus property pairs, or whether
+`title`, `name`, and `count` really should be renamed out of fourteen
+chapters. Decide the rule before doing the renames, because doing the renames
+first makes the samples read worse for no stated benefit.
+
+**Effort.** 1 hour to amend the rule and the scan, or 6 to 8 hours to rename
+across READMEs, probes, and the prose that names them.
+
+---
+
 ## Explicitly not on this list
 
 - **Combine.** Cut on merit in CURRICULUM-DESIGN section 4 and the reasoning

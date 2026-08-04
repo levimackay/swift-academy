@@ -17,7 +17,7 @@ final class Profile {
 }
 
 @MainActor
-final class Tally {
+final class Ticker {
     var fired = 0
 }
 
@@ -31,7 +31,7 @@ struct Handle<Value> {
 @MainActor
 func blockOne() {
     let profile = Profile()
-    let tally = Tally()
+    let tally = Ticker()
 
     withObservationTracking {
         _ = profile.name

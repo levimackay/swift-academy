@@ -20,6 +20,7 @@ extension Marker {
 struct PlainPin: Marker {}
 
 struct LoudPin: Marker {
+    var serial = 0
     var tint: String { "red" }
     var caption: String { "LOUD \(tint)" }
 }
@@ -43,6 +44,13 @@ func report<Pin: Marker>(_ pin: Pin) -> String {
 }
 
 print(report(loud))
+
+// The same value, and the box that holds it, measured side by side. One
+// stored `Int` is the whole of `LoudPin`; the box is five words whatever it
+// holds.
+
+print("LoudPin the value  \(MemoryLayout<LoudPin>.size) bytes")
+print("any Marker the box \(MemoryLayout<any Marker>.size) bytes")
 
 // The fix, when you wanted the type's version to win: move the member into
 // the protocol body so it becomes a requirement. Uncommenting the line below

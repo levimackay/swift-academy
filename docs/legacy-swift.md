@@ -33,13 +33,13 @@ thing you will meet.
 import Combine
 import SwiftUI
 
-final class BasketStore: ObservableObject {
+final class CartStore: ObservableObject {
     @Published var items: [String] = []
     @Published var isCheckingOut = false
 }
 
-struct BasketScreen: View {
-    @StateObject private var store = BasketStore()
+struct CartScreen: View {
+    @StateObject private var store = CartStore()
     var body: some View { Text("\(store.items.count)") }
 }
 ```
@@ -78,8 +78,22 @@ than merely deprioritized.
 `@Observable` as a side quest; migrate when you are already changing the type
 for another reason. Mixing the two in one view is where the confusing bugs
 live, and the compiler helps: `@StateObject` on an `@Observable` type fails
-with `generic struct 'StateObject' requires that 'Basket' conform to
+with `generic struct 'StateObject' requires that 'Cart' conform to
 'ObservableObject'`.
+
+**MVVM, and what is actually true in 2026.** What survives from MVVM is
+correct: a model type separate from the view, holding the state and the rules,
+testable without a screen. What does not follow is one view model per view.
+Where the view is already a value recomputed from state, a per view class
+forwarding six properties buys nothing and is a layer you keep in sync.
+
+Here is the paragraph, for when you are asked out loud. I keep state in
+`@Observable` `@MainActor` model types that own their own rules, and views own
+only the state nobody else needs, in `@State`. I do not write a view model per
+view, because the view is already a function of state and the extra layer
+mostly forwards. What I keep from MVVM is the separation: the model is
+testable with no screen. In a codebase already on `ObservableObject` I match
+the local style, because a half converted codebase is worse than either one.
 
 ---
 

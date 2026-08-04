@@ -69,12 +69,18 @@ position it means something else entirely, and this is the distinction the
 chapter exists for.
 
 ```swift
-struct Tick: Pulse { func level() -> Double { 1 } }
-struct Silence: Pulse { func level() -> Double { 0 } }
+struct Tick: Pulse {                          // one word of payload
+    var ticks: Int
+    func level() -> Double { Double(ticks) }
+}
+struct Wave: Pulse {                          // four words of payload
+    var a, b, c, d: Double
+    func level() -> Double { a + b + c + d }
+}
 
-func steady() -> some Pulse { Tick() }        // one type, name withheld
-func mixed(_ n: Int) -> any Pulse {           // any number of types
-    n > 0 ? Tick() : Silence()
+func steady() -> some Pulse { Tick(ticks: 1) }   // one type, name withheld
+func mixed(_ n: Int) -> any Pulse {              // any number of types
+    n > 0 ? Tick(ticks: n) : Wave(a: 0, b: 0, c: 0, d: 0)
 }
 ```
 
@@ -164,10 +170,10 @@ IShape shape = new Circle();                 // the default spelling
 
 | Claim | C# | Swift |
 |---|---|---|
-| a type argument exists at run time | reified, so `typeof(T)` and `new T()` work | no `typeof(T)`, no `new T()`; you buy `init()` with a constraint |
+| a type argument exists at run time | reified, so `typeof(T)`, `new T()`, and member reflection all work | `T.self` and full metadata, but no member reflection, and no `new T()` without an `init()` constraint |
 | dispatch through an abstraction | interface reference, one vtable indirection | witness table for `any P`, and often nothing at all after specialization |
 | the default spelling | `IShape` as a variable type, boxing for structs | `some P` or `<T: P>`, static; `any P` is the exception you ask for |
-| protocol members can be abstract over `Self` | no equivalent | `Self` requirements and associated types, which is why some protocols resist boxing |
+| protocol members can be abstract over `Self` | only via a self referential type parameter, as chapter 04 showed | `Self` requirements and associated types, which is why some protocols resist boxing |
 
 C# reified generics to fix Java's erasure, and the fix is a runtime service:
 the JIT shares one body across reference types and instantiates value types
@@ -203,8 +209,10 @@ Verified with `make probe CH=07 P=layout`:
 ```
 
 Two spellings keep the type and one discards it. That is the whole model, and
-every rule in the next table is a consequence of it. The drawn to scale
-version of the box, with the measurements, is
+every rule in the next table is a consequence of it. The box itself, three
+inline words plus metadata plus one witness table per protocol, was measured
+in [04-protocols](../04-protocols/README.md); this chapter is about when you
+can avoid paying for it. The drawn to scale version is
 [docs/diagrams/existentials.md](../../docs/diagrams/existentials.md).
 
 ## Where it goes wrong
@@ -272,8 +280,9 @@ here has a committed answer.
 
 1. Rewrite `func f<T: Pulse>(_ x: T) -> T` with `some`. Now rewrite
    `func g() -> some Pulse` with a generic parameter, and say why you cannot.
-2. `[any Pulse]` and `[some Pulse]`: one of these is not a legal element
-   type. Predict which, then run it and read the diagnostic.
+2. `let bag: [any Pulse] = [Tick(ticks: 1), Wave(a: 0, b: 0, c: 0, d: 0)]`,
+   then the same literal typed `[some Pulse]`. One compiles. Predict which,
+   then run the other and read the diagnostic.
 3. `MemoryLayout<any Pulse>.size` for a one field struct and a ten field
    struct. Predict both numbers before running.
 4. You hold `any Feed<Int>` and need a function that also works on

@@ -35,8 +35,9 @@ system keeping the books.
 
 ## Swift's answer
 
-It can. `Error` is an empty protocol with no members and no base class, so a
-thrown value is a value of a type you designed. An enum is the usual shape,
+It can. `Error` is a protocol with no requirements of its own and no base
+class, so a thrown value is a value of a type you designed. It does refine
+`Sendable`, which chapter 11 cashes in. An enum is the usual shape,
 because the failure set is then closed and the compiler can count it.
 
 ```swift
@@ -88,14 +89,15 @@ concrete type. A `switch` over it is exhaustive with no `default`, so adding a
 case to `BuoyError` next quarter breaks every handler that stops covering it.
 
 ```swift
-func describe(_ row: String) -> String {
+func retryDelay(after row: String) -> Duration? {
     do {
-        return "\(try windSpeed(fromRow: row)) knots"
+        _ = try windSpeed(fromRow: row)
+        return nil
     } catch {
         switch error {
-        case .offline: return "feed offline"
-        case .badRow(let text): return "unreadable row: \(text)"
-        case .stale(let seconds): return "\(seconds)s stale"
+        case .offline: return .seconds(30)
+        case .badRow: return nil
+        case .stale(let seconds): return .seconds(seconds / 2)
         }
     }
 }
@@ -131,12 +133,13 @@ do { print(try held.get()) } catch { print(error) }
 ```
 
 Thawing has a shortcut and freezing does not. A `Result { }` initializer
-builds `Result<Int, any Error>` whatever you annotate, which is table row 6,
+builds `Result<Int, any Error>` whatever you annotate, which is the
+`invalid conversion of thrown error type` row in Where it goes wrong below,
 so a typed failure is assembled by hand.
 
 `async` and `throws` are independent axes composing as `try await`. An error
 crossing an async boundary is still a returned value, so there is no stack to
-unwind and the resuming frame need not be the one that suspended.
+unwind and the thread that resumes need not be the thread that suspended.
 
 ## Predict
 
@@ -174,7 +177,7 @@ loop()                                             // 3
 | C# | Swift | Note |
 |---|---|---|
 | `throw new BuoyException()` | `throw BuoyError.offline` | both leave the function immediately |
-| `try { } catch (e) { }` | `do { } catch { }` | both bind the caught value |
+| `try { } catch (Exception e) { }` | `do { } catch { }` | both bind the caught value, C# by name and Swift implicitly |
 | `finally` | `defer` | both run on every exit path |
 | `catch (FooException)` | `catch .badRow(let text)` | both select, one by class, one by pattern |
 

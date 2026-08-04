@@ -689,9 +689,9 @@ and you declare the conformance.
 
 ### `Error`
 
-The empty protocol a thrown type must conform to. Any type can conform, and an
-`enum` with associated values is the idiomatic choice because it makes the
-failure set exhaustive.
+The protocol a thrown type must conform to. It adds no requirements of its
+own and refines `Sendable`. Any type can conform, and an `enum` with associated
+values is the idiomatic choice because it makes the failure set exhaustive.
 
 | Python | C# | Taught in |
 | --- | --- | --- |
@@ -1879,9 +1879,10 @@ it as an existential, since two `any Equatable` values may not share a type.
 ### `Sendable`
 
 A marker protocol meaning values of the type can cross an isolation boundary
-without introducing a data race. A struct of `Sendable` parts gets it
-automatically because copying it shares no storage, which is the direct link
-between value semantics and concurrency safety.
+without introducing a data race. A non public struct of `Sendable` parts gets
+it automatically because copying it shares no storage, which is the direct link
+between value semantics and concurrency safety. A `public` type states the
+conformance itself, because inference stops at the module boundary.
 
 | Python | C# | Taught in |
 | --- | --- | --- |
@@ -2238,7 +2239,8 @@ thread and must not appear in async code.
 
 A dynamic number of child tasks created inside `withTaskGroup(of:)` or
 `withThrowingTaskGroup(of:)`. Results arrive in completion order, not
-submission order, and a thrown error from one child cancels the siblings.
+submission order. A child's error surfaces from `next()`, and it is letting
+that error escape the group body that cancels the remaining children.
 
 | Python | C# | Taught in |
 | --- | --- | --- |

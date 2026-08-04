@@ -154,9 +154,11 @@ Suit s = (Suit)99;              // compiles, runs, prints "99"
 ```python
 class Phase(enum.Enum):
     idle = enum.auto()
+    busy = enum.auto()
 
 match phase:
-    case Phase.idel: ...        # never matches, never warns
+    case Phase.idle: ...        # no arm for busy, and nothing says so
+    case Phase.idel: ...        # AttributeError, but only if reached
 ```
 
 | Claim | C# | Swift |
@@ -165,15 +167,16 @@ match phase:
 | payload per instance | needs a sealed record hierarchy | `case playing(track: String)` |
 | exhaustiveness | warning only, constants only | an error, and it counts payloads |
 | Python `match` plus `enum.Enum` | (row applies to Python) | patterns match, members hold no payload |
-| Python exhaustiveness | (row applies to Python) | `match` never checks it, so a typo is a silent miss |
+| Python exhaustiveness | (row applies to Python) | `match` checks nothing, so a member with no arm falls through `case _` |
 
 C# has no discriminated union, so a four state model becomes four nullable
 fields plus a comment, or a sealed record hierarchy that gets you the
 payloads without the exhaustive switch. Python 3.10 got closer: `match` has
 class patterns, capture patterns, and guards, and it reads almost like this
 chapter. It stops one step short. Nothing checks that you covered the
-members, nothing objects to a misspelled one, and an `enum.Enum` member is a
-singleton constant, so per instance data has to live somewhere else.
+members, a misspelled member raises only when its arm is reached, and an
+`enum.Enum` member is a singleton constant, so per instance data has to live
+somewhere else.
 
 Full row set: [docs/bridge.md](../../docs/bridge.md).
 
@@ -193,8 +196,8 @@ stateDiagram-v2
 
 Four states, eight transitions, and no other value of type `Player` exists.
 The bag of optionals version of the same feature holds sixteen shapes:
-`make probe CH=05 P=states` counts them and prints the twelve that mean
-nothing. The payload travels with the state, so `fraction` is reachable only
+`make probe CH=05 P=states` counts them and prints a sample of the twelve that
+mean nothing. The payload travels with the state, so `fraction` is reachable only
 inside the `.buffering` arm. No code outside that arm can read it and no code
 inside it has to ask whether it is there.
 

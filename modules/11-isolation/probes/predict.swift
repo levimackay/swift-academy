@@ -8,13 +8,13 @@ struct Ration: Sendable {
     var units: Int
 }
 
-/// `code` is outside the actor's isolation domain because it can never
+/// `serial` is outside the actor's isolation domain because it can never
 /// change. `served` is inside it because it can.
 actor Canteen {
-    nonisolated let code: String
+    nonisolated let serial: String
     private var served = 0
 
-    init(code: String) { self.code = code }
+    init(serial: String) { self.serial = serial }
 
     func serve(_ ration: Ration) -> Int {
         served += ration.units
@@ -32,8 +32,8 @@ actor Canteen {
 }
 
 // 1. Two lines. Which of them needs an `await`, and what does it print?
-let canteen = Canteen(code: "north")
-print(canteen.code, await canteen.serve(Ration(units: 3)))
+let canteen = Canteen(serial: "north")
+print(canteen.serial, await canteen.serve(Ration(units: 3)))
 
 // 2. `sent` crossed into another isolation domain, and `mine` did not.
 //    What are the two numbers?

@@ -24,12 +24,12 @@ print("1:", earlier.count, later.count)
 // prediction:
 
 final class Dial { var ticks = 0 }
-struct Gauge {
+struct Cluster {
     var dial = Dial()
     var scale = 1
 }
 
-var one = Gauge()
+var one = Cluster()
 var two = one
 two.scale = 5
 two.dial.ticks = 7

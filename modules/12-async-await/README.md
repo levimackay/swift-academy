@@ -90,8 +90,10 @@ func crawl(_ paths: [String]) async -> Int {
 ```
 
 Results arrive in completion order, not submission order, and the closing
-brace of `withTaskGroup` is a join. Use `withThrowingTaskGroup` and a child
-that throws cancels its siblings and the error comes out of `next()`.
+brace of `withTaskGroup` is a join. Use `withThrowingTaskGroup` and a child's
+error comes out of `next()`. Let it propagate out of the group body and the
+group cancels the remaining children and waits for them before rethrowing;
+catch it inside the body and the siblings keep running.
 
 Cancellation is a flag and nothing more. `cancel()` sets it on a task and on
 every task below it, then returns. No stack is unwound and no thread is
@@ -134,8 +136,9 @@ to be rare.
 
 Write your prediction on each `PREDICTION:` line in
 [`probes/predict.swift`](probes/predict.swift), then run
-`make probe CH=12 P=predict`. All three ask the same question: what does a new
-task inherit from the task that made it.
+`make probe CH=12 P=predict`. Items 1 and 3 ask what a new task inherits from
+the task that made it. Item 2 asks a different question about `AsyncStream`
+buffering.
 
 ```swift
 let outer = Task { () -> (Bool, Bool) in
@@ -157,14 +160,14 @@ print(await outer.value)                                   // 1
 | C# | Swift | Note |
 |---|---|---|
 | `await` | `await` | both mark a suspension point rather than a thread block |
-| async colouring | async colouring | a synchronous caller still cannot call an async function |
+| async colouring | async colouring | both put `async` in the signature, and neither lets a synchronous caller `await` |
 | `IAsyncEnumerable<T>` | `AsyncSequence` | `await foreach` becomes `for await` |
 | `TaskCompletionSource<T>` | `withCheckedContinuation` | both bridge a callback into an awaited value |
 
 ### Where it breaks
 
-The single most expensive assumption you can carry over is that these two
-words name the same thing.
+The most expensive assumption you can carry over is that these two words name
+the same thing.
 
 | Claim | C# `Task` | Swift `Task` |
 |---|---|---|
@@ -172,13 +175,13 @@ words name the same thing.
 | how you usually get one | every `async` method returns one | you almost never make one; `async let` and groups make children for you |
 | blocking on it | `.Result`, `.Wait()`, `GetAwaiter().GetResult()` | nothing. Reading `.value` is an `await` |
 | lifetime | unowned; nothing waits for it unless you do | a child cannot outlive the scope that made it |
-| cancellation | a `CancellationToken` you thread through every signature | ambient on the task, and it propagates down the tree |
-| one failure of many | `Task.WhenAll` runs the rest regardless | a throwing group cancels the siblings |
+| cancellation | a `CancellationToken` you thread through every signature | ambient on the task and propagating down the tree |
+| one failure of many | `Task.WhenAll` runs the rest regardless | an error that escapes the group body cancels the siblings |
 
 A C# `async` method returns a `Task` because the method is the unit of work.
-In Swift the task is the unit of work and the method is a function that
-suspends, so `async` shows up in the type and nothing is returned to hold.
-`Task.Run` translates to `Task.detached`, and both are rare here.
+In Swift the task is the unit of work and the method suspends, so `async` is
+in the type and nothing is returned to hold. `Task.Run` translates to
+`Task.detached`, and both are rare here.
 
 Full row set: [docs/bridge.md](../../docs/bridge.md).
 

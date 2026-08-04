@@ -66,12 +66,18 @@
 // note: conflicting access is here
 
 // 6. A closure parameter is non escaping by default, and storing it escapes.
+//    This is the shape exercise 6 hits: a closure written into a property
+//    that outlives the call.
 //
-// var stored: [() -> Void] = []
-// func register(_ handler: () -> Void) { stored.append(handler) }
+// struct Slots {
+//     private var kept: [String: () -> Void] = [:]
+//     mutating func keep(_ key: String, _ handler: () -> Void) {
+//         kept[key] = handler
+//     }
+// }
 //
-// error: converting non-escaping parameter 'handler' to generic parameter
-// 'Element' may allow it to escape
+// error: assigning non-escaping parameter 'handler' to an '@escaping' closure
+// note: parameter 'handler' is implicitly non-escaping
 
 // 7. A returned closure escapes, and a value type's self cannot outlive the
 //    call that is mutating it.

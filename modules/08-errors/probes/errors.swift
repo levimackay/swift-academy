@@ -6,8 +6,8 @@
 //     make probe CH=08 P=errors
 //
 // The chapter's "Where it goes wrong" table is built from blocks 1 through 8.
-// Blocks 9 and 10 are the two async ones the chapter discusses in prose
-// rather than tabling.
+// Blocks 9 through 12 are not tabled: 9 and 10 are the async ones the chapter
+// discusses in prose, 11 is `rethrows`, and 12 is the stale `try` warning.
 //
 // The file stays green on purpose: a probe that compiles today and stops
 // compiling after a toolchain upgrade tells you the wording drifted, and a

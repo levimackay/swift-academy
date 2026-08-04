@@ -7,8 +7,10 @@ build of a real iOS app installed on your own device.
 Every exercise ships as a stub plus a failing test. No solution to any exercise
 exists on `main`. You type every line.
 
-**Written so far: chapters 01, 10, and 13.** The other eleven have a README
-saying what they will cover and nothing else. Projects 01 and 05 ship their
+**Written so far: all fourteen chapters.** Every chapter ships its prose, its
+probes, its exercise stubs, and its failing test suite, and all fourteen build
+and test on the Command Line Tools. Only the `preview-app/` work in chapters
+13 and 14 needs full Xcode and the simulator. Projects 01 and 05 ship their
 failing test suites; the other four ship specs and scaffolds. This repository
 is authored and worked through at the same time, so it is always partly built,
 and [PROGRESS.md](PROGRESS.md) has a column for exactly this. Say so here

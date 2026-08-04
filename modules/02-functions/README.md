@@ -134,9 +134,9 @@ func widths(of leading: Int..., and trailing: Int...) -> (Int, Int) {
 }
 print(widths(of: 1, 2, 3, and: 4), widths())            // 1
 
-var built: [() -> Int] = []
-for step in 1...3 { built.append { step * 10 } }
-print(built.map { $0() })                               // 2
+let lengths = ["swift", "go", "rust"].map(\.count)
+let joinTwo: (String, String) -> String = (+)
+print(lengths, joinTwo("a", "b"), lengths.reduce(0, +)) // 2
 ```
 
 ## Coming from Python
@@ -145,7 +145,7 @@ print(built.map { $0() })                               // 2
 
 | Python | Swift | Note |
 |---|---|---|
-| `f(timeout: 5)` at the call site | `f(timeout: 5)` | you already write keyword arguments for readability |
+| `f(timeout=5)` at the call site | `f(timeout: 5)` | you already write keyword arguments for readability |
 | `def f(x, retries=3)` | `func f(_ x: Int, retries: Int = 3)` | same defaulting, same call site |
 | `def f(*args)` | `func f(_ values: Int...)` | both arrive as a sequence in the body |
 | a function is an object | a function is a value of function type | passing, storing, and returning all carry over |
@@ -170,11 +170,10 @@ print([a() for a in adders])     # [30, 30, 30]
 | decorators | rewrite the function at import, any new signature | no analogue; a higher order function returning a closure, checked at compile time |
 | lifetime of a passed function | always heap, always indefinite | non escaping by default, and `@escaping` is a declared promise |
 
-The loop above prints `[10, 20, 30]` in Swift, verified in `probes/capture.swift`.
-Decorators are the real gap: `@retry` in Python replaces a function with
-another one at import time and nothing checks the result. Swift splits that
-work across higher order functions, `@propertyWrapper`, and macros, none of
-which can change the shape of what they decorate.
+The comprehension above prints `[30, 30, 30]`; the Swift loop in
+`probes/capture.swift` does not. Decorators are the other gap: Swift splits
+that work across higher order functions, `@propertyWrapper`, and macros, none
+of which can change the shape of what they decorate.
 
 Full row set: [docs/bridge-python.md](../../docs/bridge-python.md).
 
@@ -217,7 +216,7 @@ that only type checks can show both of those lines green.
 | `error: extraneous argument labels 'from:to:' in call` | you are calling through a function type, and a type has no labels | call it positionally, or keep the function's own name |
 | `error: passing value of type 'Int' to an inout parameter requires explicit '&'` | mutation of a caller's variable is never invisible at the call site | write `&`, or ask whether a return value is the better shape |
 | `error: inout arguments are not allowed to alias each other` | copy in copy out cannot write two results back into one variable | copy to a local, pass that, assign the result yourself |
-| `error: converting non-escaping parameter 'handler' to generic parameter 'Element' may allow it to escape` | you stored a closure the compiler promised would not outlive the call | mark the parameter `@escaping` and accept the allocation |
+| `error: assigning non-escaping parameter 'handler' to an '@escaping' closure` | you stored a closure the compiler promised would not outlive the call | mark the parameter `@escaping` and accept the allocation |
 | `error: escaping closure captures mutating 'self' parameter` | a value type's `self` is copy in copy out for the duration of the call, so a closure cannot hold it past that | capture the fields you need, or move the state into a reference type in chapter 10 |
 | `error: contextual closure type '() -> Int' expects 0 arguments, but 1 was used in closure body` | `$0` invented a parameter the expected function type does not have | check what the callee actually passes you |
 

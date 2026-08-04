@@ -53,13 +53,13 @@ somebody writes. The vocabulary that consumes them is the same on every
 | `prefix`, `dropFirst`, `first(where:)` | take, skip, or stop early |
 | `sorted(by:)`, `sorted(using:)` | a predicate, or a `KeyPathComparator` |
 
-`compactMap` earns a sentence, because Python has no name for it. A sequence
-of optionals is not a problem to validate away, it is already a value, and
+`compactMap` earns a sentence, because Python has no name for it. A transform
+that can fail is not a problem to guard around, it is already a value, and
 `compactMap` is a chain saying "attempt this, keep what worked".
 
 ```swift
-let entered: [String?] = ["42", nil, "eight", "7"]
-let accepted = entered.compactMap { $0.flatMap(Int.init) }   // [42, 7]
+let stamps = ["2026-08-04", "not a date", "2026-01-01"]
+let years = stamps.compactMap { Int($0.prefix(4)) }          // [2026, 2026]
 ```
 
 Dictionaries add two calls that each replace a loop. The default subscript
@@ -67,9 +67,11 @@ makes a miss behave like a hit, and `Dictionary(grouping:by:)` is a
 `setdefault` loop with a name.
 
 ```swift
-var tally: [String: Int] = [:]
-for word in ["fig", "date", "fig"] { tally[word, default: 0] += 1 }
-// tally == ["fig": 2, "date": 1]
+var totals: [String: Int] = [:]
+for sale in [("fruit", 3), ("tool", 5), ("fruit", 2)] {
+    totals[sale.0, default: 0] += sale.1
+}
+// totals == ["fruit": 5, "tool": 5]
 
 let byLength = Dictionary(grouping: ["fig", "date", "plum"], by: \.count)
 // byLength == [3: ["fig"], 4: ["date", "plum"]]
@@ -102,10 +104,10 @@ let fifth = display.index(display.startIndex, offsetBy: 5)
 print(display[fifth], display.count)          // 👨‍👩‍👧 6
 ```
 
-The bytes were not hidden, they were made explicit. `characters`,
-`unicodeScalars`, `utf8`, and `utf16` are four real `Collection`s over one
-storage, each with its own `Element` and `count`; pick the one whose unit
-matches the question. Slicing a `String` yields a `Substring`, which shares
+The bytes were not hidden, they were made explicit. `String` is itself a
+`Collection` of `Character`, and `unicodeScalars`, `utf8`, and `utf16` are
+three more views over that same storage, each with its own `Element` and
+`count`; pick the one whose unit matches the question. Slicing a `String` yields a `Substring`, which shares
 the parent's storage and indices and is converted with `String(part)` where it
 is stored or returned. The rest, index arithmetic, normalization, encoding
 conversion, and `StringProtocol`, is lookup:
@@ -170,7 +172,7 @@ Full row set, including FF5, FF7, FF9, and FF12:
 "Levi 👨‍👩‍👧" across its four views, drawn to scale in UTF-8 bytes.
 Verified with `make probe CH=06 P=views`.
 
-characters      |L|e|v|i|_|one family emoji, one Character    |   6
+Character       |L|e|v|i|_|one family emoji, one Character    |   6
 unicodeScalars  |L|e|v|i|_|U+1F468|ZWJ  |U+1F469|ZWJ  |U+1F467|  10
 utf8            |L|e|v|i|_|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|  23
 utf16           |L|e|v|i|_|hi |lo |ZWJ  |hi |lo |ZWJ  |hi |lo |  13
@@ -179,8 +181,9 @@ utf16           |L|e|v|i|_|hi |lo |ZWJ  |hi |lo |ZWJ  |hi |lo |  13
 ```
 
 One storage, four rulers laid along it. The views do not disagree; they answer
-four questions, and `count` differs because the unit differs. `characters` for
-anything a person reads, `utf8` for anything crossing a wire or a file,
+four questions, and `count` differs because the unit differs. The `String`
+itself for anything a person reads, `utf8` for anything crossing a wire or a
+file,
 `unicodeScalars` when you genuinely mean a code point, `utf16` only when an
 API demands it.
 

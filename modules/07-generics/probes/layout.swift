@@ -12,8 +12,8 @@ protocol Pulse {
 
 /// One word of payload, so it fits the existential box's inline buffer.
 struct Tick: Pulse {
-    var count: Int
-    func level() -> Double { Double(count) }
+    var ticks: Int
+    func level() -> Double { Double(ticks) }
 }
 
 /// Four words of payload, so it does not fit and has to be heap allocated
@@ -42,10 +42,10 @@ print("dynamic name", nameAtRuntime(boxed))
 
 // Opaque return types keep identity across calls, which is the whole
 // difference between `some` and `any` in one line.
-func hidden() -> some Pulse { Tick(count: 1) }
-func alsoHidden() -> some Pulse { Tick(count: 2) }
+func hidden() -> some Pulse { Tick(ticks: 1) }
+func alsoHidden() -> some Pulse { Tick(ticks: 2) }
 print("same opaque type twice:", type(of: hidden()) == type(of: alsoHidden()))
 
-let mixed: [any Pulse] = [Tick(count: 1), Wave(a: 1, b: 1, c: 1, d: 1)]
+let mixed: [any Pulse] = [Tick(ticks: 1), Wave(a: 1, b: 1, c: 1, d: 1)]
 print("distinct dynamic types in the array:",
       Set(mixed.map { "\(type(of: $0))" }).count)

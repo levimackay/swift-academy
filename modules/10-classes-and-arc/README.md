@@ -60,14 +60,14 @@ deallocates the instant the count reaches zero. Nothing scans and nothing
 defers, so `deinit` runs at a point you can predict from the source.
 
 ```swift
-final class Connection {
+final class Socket {
     let host: String
     init(host: String) { self.host = host; print("open \(host)") }
     deinit { print("close \(host)") }
 }
 
 func work() {
-    let socket = Connection(host: "db")
+    let socket = Socket(host: "db")
     print("using \(socket.host)")
 }       // "close db" prints here, at this brace, every run
 ```
@@ -312,5 +312,6 @@ Not required to advance.
       and none for the leaking one, and I can point at the edge that differs
 
 This chapter does not cover a class crossing an isolation boundary, which is
-chapter 11, nor copy on write, which is chapter 03. The retain count filmstrip
+chapter 11, nor copy on write, which is
+[03-value-semantics](../03-value-semantics/README.md). The retain count filmstrip
 is [docs/diagrams/arc-and-cycles.md](../../docs/diagrams/arc-and-cycles.md).

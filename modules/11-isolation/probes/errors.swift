@@ -14,7 +14,7 @@
 
 /// Shared mutable storage with no synchronization. Nothing here is safe to
 /// hand to a second isolation domain, and the compiler is about to say so
-/// eight different ways.
+/// nine different ways.
 final class Tripmeter {
     var miles = 0
 }

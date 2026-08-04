@@ -37,8 +37,9 @@ Everything after that line is ordinary Swift with no defensive reads in it.
 
 `Codable` is `Encodable & Decodable`, and the compiler writes both
 conformances for you when every stored property is itself `Codable` and you
-declare the conformance. Nothing is reflective and nothing happens at runtime:
-this is code generated at compile time from your stored properties.
+declare the conformance. Nothing is reflective and no conformance is computed
+at runtime: this is code generated at compile time from your stored
+properties.
 
 ```swift
 struct Show: Codable, Equatable {
@@ -173,8 +174,8 @@ expected, and every line after it is total.
 |---|---|---|
 | when the shape is checked | never, or at the first use of each field | once, at one line you can point at |
 | what a bad document produces | an exception of the day, from the point of use | a `DecodingError` with a coding path |
-| an unknown payload | natural, you keep the dict | not expressible, the shape must be a type |
-| C# by comparison | (row applies to C#) | `[JsonPropertyName]` is `CodingKeys` with worse errors |
+| an unknown payload | natural, you keep the dict | only as a type you write, such as a recursive `JSONValue` enum |
+| C# by comparison | (row applies to C#) | `[JsonPropertyName]` annotates one property; `CodingKeys` replaces the whole key set |
 
 pydantic is the near miss worth naming. It validates at construction like
 Swift does, but the model is a runtime object graph, the checking is a library

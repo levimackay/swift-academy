@@ -69,7 +69,7 @@ import SwiftUI
 
 @Observable
 @MainActor
-final class Basket {
+final class Cart {
     var items: [String] = []
     var isCheckingOut = false
 }
@@ -87,13 +87,13 @@ being built, and frames are built on the main actor. Chapter 11 made that a
 type level fact rather than a rule in a comment, and this is where it pays.
 
 ```swift
-struct BasketScreen: View {
-    @State private var basket = Basket()
+struct CartScreen: View {
+    @State private var cart = Cart()
 
     var body: some View {
         VStack {
-            Text("\(basket.items.count) items")
-            CheckoutToggle(basket: basket)
+            Text("\(cart.items.count) items")
+            CheckoutToggle(cart: cart)
         }
     }
 }
@@ -102,14 +102,14 @@ struct BasketScreen: View {
 `@State` here owns the model's lifetime, not its value, and the boundary is
 narrower than it first reads. The `@State` storage is created once per view
 identity, and the instance in that storage is the one `body` sees on every
-rebuild. The initializer expression `Basket()` is a different thing: it is
+rebuild. The initializer expression `Cart()` is a different thing: it is
 part of the view struct's own initializer, so it is evaluated every time the
 struct is constructed. SwiftUI keeps the first result and throws the rest
 away.
 
 So "the initializer runs once" is the folk version and it is wrong. What runs
-once is the storage allocation. `Basket()` runs on every rebuild, and every
-`Basket` after the first is built and immediately discarded. That is why an
+once is the storage allocation. `Cart()` runs on every rebuild, and every
+`Cart` after the first is built and immediately discarded. That is why an
 expensive or side effecting initializer inside `@State` is a real bug, and it
 is what checkpoint question 2 is asking you to count.
 
@@ -118,10 +118,10 @@ sharing. It needs `@Bindable` only to project bindings out of it.
 
 ```swift
 struct CheckoutToggle: View {
-    @Bindable var basket: Basket
+    @Bindable var cart: Cart
 
     var body: some View {
-        Toggle("Checking out", isOn: $basket.isCheckingOut)
+        Toggle("Checking out", isOn: $cart.isCheckingOut)
     }
 }
 ```
@@ -146,7 +146,7 @@ of the object whenever any `@Published` property changes.
 | `ObservableObject` and `@Published` | `@Observable` | every SwiftUI post written before iOS 17 |
 | `@StateObject` | `@State` | it was the only way to own a reference model |
 | `@ObservedObject` | a plain property, or `@Bindable` | the old name for passing the model down |
-| `@EnvironmentObject` | `@Environment(Basket.self)` | it needed no key type, so it read as simpler |
+| `@EnvironmentObject` | `@Environment(Cart.self)` | it needed no key type, so it read as simpler |
 
 The full account, including what still compiles and what a real codebase will
 look like, is in [docs/legacy-swift.md](../../docs/legacy-swift.md).
@@ -188,7 +188,7 @@ WPF with MVVM is the closest model you have, and the mapping is closer than
 you expect right up to the point where it inverts.
 
 ```csharp
-public class BasketViewModel : INotifyPropertyChanged {
+public class CartViewModel : INotifyPropertyChanged {
     private bool _isCheckingOut;
     public bool IsCheckingOut {
         get => _isCheckingOut;
@@ -225,7 +225,7 @@ graph TD
         A2["id B: isExpanded = false"]
         A3["id C: fresh, isExpanded = false"]
     end
-    Screen["BasketScreen struct, rebuilt on every change"] --> RowA["NoteRow id A"]
+    Screen["CartScreen struct, rebuilt on every change"] --> RowA["NoteRow id A"]
     Screen --> RowB["NoteRow id B"]
     Screen --> RowC["NoteRow id C"]
     RowA -.-> A1
@@ -257,7 +257,7 @@ make probe CH=13 P=diagnostics
 | `error: cannot convert value 'name' of type 'String' to expected type 'Binding<String>', use wrapper instead` | the child declared `@Binding`, so it wants the projected value | pass `$name`, not `name` |
 | `error: '@Observable' cannot be applied to struct type 'Preferences' (from macro 'Observable')` | observation is about one shared instance, and a struct is copied | make it a `final class`, or hold it in `@State` as a value |
 | `error: 'init(wrappedValue:)' is unavailable: The wrapped value must be an object that conforms to Observable` | `@Bindable` projects bindings out of an observable model only | add `@Observable` to the class |
-| `error: generic struct 'StateObject' requires that 'Basket' conform to 'ObservableObject'` | you mixed the Combine era wrapper with the modern macro | use `@State`, and delete `@StateObject` |
+| `error: generic struct 'StateObject' requires that 'Cart' conform to 'ObservableObject'` | you mixed the Combine era wrapper with the modern macro | use `@State`, and delete `@StateObject` |
 | `error: main actor-isolated property 'total' can not be referenced from a nonisolated context` | UI state is main actor isolated and the caller is not | make the caller `@MainActor`, or `await` it |
 | `error: referencing initializer 'init(_:content:)' on 'ForEach' requires that 'Reminder' conform to 'Identifiable'` | SwiftUI never guesses identity | give the element a stored `id`, or pass `id:` |
 | `error: cannot find '$theme' in scope` | `@Environment` reads a value it does not own, so it has no projection | own it with `@State` where it is provided |
@@ -297,10 +297,10 @@ A binding is two closures. Neither of them has to close over a position.
 
 ## Retrieval checkpoint
 
-1. A view reads `basket.isCheckingOut` and nothing else. Someone appends to
-   `basket.items`. Does `body` run again, and what mechanism decides?
-2. `@State private var basket = Basket()` sits in a view that rebuilds sixty
-   times a second. How many `Basket` instances exist after one second, and why?
+1. A view reads `cart.isCheckingOut` and nothing else. Someone appends to
+   `cart.items`. Does `body` run again, and what mechanism decides?
+2. `@State private var cart = Cart()` sits in a view that rebuilds sixty
+   times a second. How many `Cart` instances exist after one second, and why?
 3. Will a `struct` marked `@Observable` compile? Predict the diagnostic before
    you run it.
 4. A row's `id` is its `title`. The user renames the row. Predict what happens

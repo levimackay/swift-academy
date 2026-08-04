@@ -114,9 +114,10 @@ Declare `==` yourself and synthesis of `hash(into:)` continues from the stored
 properties, so your rule and its rule disagree, no diagnostic fires, and a
 `Set` starts holding values it believes are equal. Write both or neither.
 
-Last, a forward pointer. A struct whose stored properties are all `Sendable`
-is `Sendable` with nothing typed, which is the concurrency dividend that value
-semantics pays. Chapter 11 spends it.
+Last, a forward pointer. A non public struct whose stored properties are all
+`Sendable` is `Sendable` with nothing typed, which is the concurrency dividend
+that value semantics pays. Chapter 11 spends it, including why a `public`
+struct has to say `: Sendable` out loud.
 
 ## Predict
 
@@ -132,8 +133,8 @@ later.append(4)
 print(earlier.count, later.count)                      // 1
 
 final class Dial { var ticks = 0 }
-struct Gauge { var dial = Dial(); var scale = 1 }
-var one = Gauge(); var two = one
+struct Cluster { var dial = Dial(); var scale = 1 }
+var one = Cluster(); var two = one
 two.scale = 5; two.dial.ticks = 7
 print(one.scale, one.dial.ticks)                       // 2
 
@@ -174,7 +175,7 @@ b.Names.Add("grace");
 | C# | Swift | Why the reasoning differs |
 |---|---|---|
 | `class` is the default choice | `struct` is the default choice | The CLR made identity cheap and aliasing normal. Swift made copies cheap instead. |
-| mutable structs are a hazard, so the advice is to avoid them | `mutating` is the ordinary way to write a method | A C# struct mutated through an interface or a `readonly` local silently hits a copy. Swift's `self` is `inout` there. |
+| mutable structs are a hazard, so the advice is to avoid them | `mutating` is the ordinary way to write a method | A C# struct mutated through an interface, a `readonly` field, or an `in` parameter silently hits a copy. Swift's `self` is `inout` there. |
 | `List<T> b = a` aliases | `var b = a` copies | The day one bug. No error, no crash, a wrong number somewhere else. |
 | defensive copies and `IReadOnlyList<T>` | nothing to write | The callee's copy is unreachable from you, so there is nothing to defend. |
 | a large struct is a performance smell | a large struct is ordinary | Its stored collections are copy on write, so the copy is a retain until someone writes. |

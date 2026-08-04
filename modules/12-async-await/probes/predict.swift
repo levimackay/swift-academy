@@ -4,8 +4,9 @@
 //
 //     make probe CH=12 P=predict
 //
-// All three are about inheritance: what a new task picks up from the task
-// that created it, and what it deliberately does not.
+// Items 1 and 3 are about inheritance: what a new task picks up from the task
+// that created it, and what it deliberately does not. Item 2 is not; it is
+// about what an AsyncStream buffers and what it drops.
 
 // 1. An unstructured task started inside another task.
 //    PREDICTION:

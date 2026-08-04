@@ -28,17 +28,18 @@ column read as the second when it meant the first.
 | 08 | Errors, Typed Throws, and Result | 5 | yes | not started | 37 | |
 | 09 | Codable and the Data Boundary | 5 | yes | not started | 35 | |
 | 10 | Reference Types, ARC, and Capture | 6 | yes | not started | 15 | |
-| 11 | Sendable, Actors, and MainActor | 7 | placeholder | not started | 0 | |
+| 11 | Sendable, Actors, and MainActor | 7 | yes | not started | 17 | |
 | 12 | Structured Concurrency | 7 | yes | not started | 27 | |
 | 13 | SwiftUI: Views, State, and Identity | 8 | yes | not started | 20 | |
-| 14 | Navigation, Dependencies, and Persistence | 8 | placeholder | not started | 0 | |
+| 14 | Navigation, Dependencies, and Persistence | 8 | yes | not started | 34 | |
 
-Three of fourteen chapters are written. A `placeholder` chapter has a README
-stating what it will cover and comment only files in `exercises/` and
-`tests/`, so it compiles and contributes zero tests.
+All fourteen chapters are written, so no chapter is a `placeholder` today.
+Chapters 01 to 12 run under the Command Line Tools. Chapters 13 and 14 build
+and test there too, but their `preview-app/` work needs full Xcode and the
+simulator.
 
-Chapter hours total 86. Written chapters contribute 64 tests, which is what
-`swift test` at the root reports today.
+Chapter hours total 86. The fourteen chapters contribute 428 tests across 76
+suites, which is what `swift test` at the root reports today.
 
 ## Projects
 
@@ -104,6 +105,21 @@ after a gap costs nothing.
   provably selecting other chapters' tests. Corrected the claim that chapters
   13 and 14 need Xcode: verified, they build and test on CommandLineTools,
   and only the simulator work needs Xcode.
+
+- **2026-08-04** Review pass across chapters 02 to 14 applied. Corrected
+  eleven false claims about Python, C#, and Swift (Python keyword argument
+  syntax, Python `match` on a misspelled member, C# `catch` syntax, C#
+  `readonly` locals, C# `Self` constraints, C# LINQ expression trees, C#
+  synchronous callers of async methods, `String.characters`, `Error` as an
+  empty protocol, `Sendable` inference on `public` types, and throwing task
+  group sibling cancellation). Repointed four chapter references that named
+  the wrong probe, row, or count. Replaced two leaked exercise answers in
+  chapter 06 and one in chapter 08. Renamed every type and function name that
+  a lesson sample shared with an exercise stub, so that half of the tutor rule
+  scan is clean. Fixed chapter 13's diagnostics probe, which declared one
+  class name twice and did not compile. Chapter 14's MVVM section moved into
+  `docs/legacy-swift.md`, bringing the chapter back under the 1800 word cap.
+  All fourteen chapters are now marked written.
 
 **Next action:** open `modules/01-optionals/README.md`, work the six exercises
 in `modules/01-optionals/exercises/Optionals.swift` in the order the chapter

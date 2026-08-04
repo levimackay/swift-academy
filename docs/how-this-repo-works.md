@@ -307,9 +307,14 @@ The mechanical checks:
    The check is mechanical and takes one pass: collect every `func`, type, and
    stored property name declared under any `exercises/`, then scan every
    Swift fenced block in every chapter README for the same names. As of
-   2026-08-03 that scan reports zero overlaps, and it is what caught
-   `Connection.name` against `Listener.name` and `CounterView.count` against
-   `TapCounter.count`, both of which were renamed rather than argued about.
+   2026-08-04 that scan reports zero **type** and **function** overlaps, and it
+   is what caught `Connection.name` against `Listener.name`, `CounterView.count`
+   against `TapCounter.count`, `Gauge` in chapters 03 and 04 against chapter
+   07's stub, `Basket` in chapter 13 against chapter 03's, and `RowLabel.spoken`
+   in chapter 14 against its own exercise 5, all renamed rather than argued
+   about. Six single word **property** overlaps survive, all of them `name`,
+   `title`, `show`, or `stock`, and they are listed with the open decision in
+   [ROADMAP-NEXT.md](ROADMAP-NEXT.md) item 17 rather than quietly dropped.
    Generic nouns are not exempt: rename yours, because the sample is always
    the cheaper thing to change.
 2. No lesson sample shares a signature with any exercise stub.

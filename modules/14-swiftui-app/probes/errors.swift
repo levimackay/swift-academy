@@ -68,7 +68,7 @@ import SwiftUI
 //    which is the compiler telling you that a route is an identifier and not
 //    a place to smuggle a model object.
 //
-// struct Attachment { var bytes: Int }
+// struct Attachment: Equatable, Codable { var bytes: Int }
 //
 // enum Waypoint: Hashable, Codable {
 //     case attachment(Attachment)
