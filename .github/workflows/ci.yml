@@ -1,0 +1,195 @@
+# CI, and what a green check here actually means.
+#
+# This repo ships stubs on main. Every exercise stub returns a compiling wrong
+# value, and every test suite is written to reject a constant return, so on a
+# fresh clone of main `swift test` is supposed to be red. That is the design,
+# not a broken build.
+#
+# So a workflow that ran `swift test` as a hard gate on main would be red
+# forever, and a workflow that made it pass anyway would be lying. The split
+# below is the honest version:
+#
+#   compile        Hard gate on every branch. The manifests resolve, all 28
+#                  chapter targets compile, the test bundle links, every
+#                  relative markdown link resolves, and no em dash or en dash
+#                  is present. This is the check that catches a broken stub, a
+#                  manifest drift, or a dead link on the front page, and it is
+#                  the only thing that can legitimately be green while the
+#                  exercises are unsolved.
+#
+#   chapter-tests  Hard gate on the solutions branch only. That branch holds
+#                  the implementations, so there it must be green, and a red
+#                  run means a solution regressed. On every other branch the
+#                  same command runs but cannot fail the workflow: its output
+#                  is the scoreboard, and the failure count is the progress
+#                  bar. Read the log, do not read the check mark.
+#
+#   satellites     drills is a hard gate. The project packages are not: a
+#                  project test iterates a type whose conformance the learner
+#                  has not written yet, so those packages are expected to fail
+#                  to build in isolation until the project is done. Today that
+#                  is projects 01 and 05, which fail with `cannot find 'Grid'
+#                  in scope` and `cannot find 'Bus' in scope`. Projects
+#                  03, 04, and 06 build clean because their suites are not
+#                  written yet, which the summary distinguishes.
+#
+# There is no badge in the README yet, by decision. A badge that is green
+# because it only checks compilation would advertise something it does not
+# measure. Revisit once six chapters are recorded on the solutions branch.
+
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REQUIRED_SWIFT: "6.2"
+
+jobs:
+  compile:
+    name: Compile every chapter target
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the newest installed Xcode
+        run: |
+          set -euo pipefail
+          newest="$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -n 1)"
+          if [ -z "$newest" ]; then
+            echo "No Xcode found on the runner image." >&2
+            exit 1
+          fi
+          sudo xcode-select -s "$newest/Contents/Developer"
+          echo "Selected $newest"
+
+      - name: Report and gate the toolchain version
+        run: |
+          set -euo pipefail
+          swift --version
+          have="$(swift --version 2>&1 | grep -oE '[0-9]+\.[0-9]+' | head -n 1)"
+          want="${REQUIRED_SWIFT}"
+          lowest="$(printf '%s\n%s\n' "$have" "$want" | sort -V | head -n 1)"
+          if [ "$lowest" != "$want" ]; then
+            echo "This repo needs Swift $want or newer, the runner has $have." >&2
+            echo "Bump the runner image or pin a toolchain." >&2
+            exit 1
+          fi
+
+      - name: Build all 28 chapter targets and the test bundle
+        run: swift build --build-tests
+
+      - name: Lint the shell scripts
+        run: |
+          set -euo pipefail
+          for script in scripts/*.sh; do
+            bash -n "$script"
+            echo "syntax ok: $script"
+          done
+
+      # Hard gate. A dead relative link and a dash used as punctuation are
+      # both binding rules, and both are cheaper to catch here than in review.
+      - name: Check links and dashes
+        run: ./scripts/check-links.sh
+
+      - name: Environment report
+        run: ./scripts/verify-environment.sh
+
+  chapter-tests:
+    name: Chapter test suites
+    runs-on: macos-latest
+    needs: compile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the newest installed Xcode
+        run: |
+          set -euo pipefail
+          newest="$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -n 1)"
+          sudo xcode-select -s "$newest/Contents/Developer"
+
+      # On refs/heads/solutions this step must pass. Anywhere else it reports
+      # the scoreboard and the job stays green, because unsolved exercises are
+      # the expected state of main.
+      - name: swift test
+        continue-on-error: ${{ github.ref != 'refs/heads/solutions' }}
+        run: swift test
+
+      - name: Explain the result
+        if: always()
+        env:
+          CURRENT_REF: ${{ github.ref }}
+        run: |
+          if [ "$CURRENT_REF" = "refs/heads/solutions" ]; then
+            echo "This is the solutions branch, so the run above was a hard gate."
+          else
+            echo "Unsolved exercises are expected to fail here."
+            echo "The failure list above is the scoreboard, not a broken build."
+          fi
+
+  satellites:
+    name: Drills and project packages
+    runs-on: macos-latest
+    needs: compile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the newest installed Xcode
+        run: |
+          set -euo pipefail
+          newest="$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -n 1)"
+          sudo xcode-select -s "$newest/Contents/Developer"
+
+      - name: Build the drills package
+        run: swift build --build-tests --package-path drills
+
+      # Not a gate. A project scaffold ships tests that exercise API the
+      # learner has not written yet, so failing to build is the correct state
+      # of an unstarted project. The summary says which ones stand up.
+      - name: Build the project packages, reporting only
+        run: |
+          set -uo pipefail
+          unstarted=0
+          for package in projects/01-life-grid \
+                         projects/03-collections-kit \
+                         projects/04-feed-parser \
+                         projects/05-event-bus \
+                         projects/06-capstone/Core; do
+            if swift build --build-tests --package-path "$package" >/tmp/build.log 2>&1; then
+              echo "builds:      $package"
+            else
+              echo "not yet:     $package"
+              tail -n 5 /tmp/build.log | sed 's/^/             /'
+              unstarted=$((unstarted + 1))
+            fi
+          done
+          echo ""
+          echo "$unstarted project package(s) do not build. That is the expected"
+          echo "state of an unstarted project whose suite has shipped: the tests"
+          echo "name types you have not written, so the package cannot link."
+          echo "A project that builds clean either is finished or has no suite yet."
+          echo "PROGRESS.md says which."
+
+      # Project 04's fixtures are authored by the course rather than by the
+      # learner, so they are the one thing in projects/ that must always be
+      # valid. Ten parse, and 11-truncated.json must not.
+      - name: Validate the feed parser fixtures
+        run: |
+          set -euo pipefail
+          cd projects/04-feed-parser/Fixtures
+          for f in 0*.json 10-*.json; do
+            python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$f"
+            echo "valid:       $f"
+          done
+          if python3 -c "import json; json.load(open('11-truncated.json'))" 2>/dev/null; then
+            echo "11-truncated.json parsed, and it must not." >&2
+            exit 1
+          fi
+          echo "unparseable: 11-truncated.json (as intended)"

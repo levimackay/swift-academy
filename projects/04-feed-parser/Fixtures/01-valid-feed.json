@@ -1,0 +1,36 @@
+{
+  "feed_title": "Field Notes",
+  "feed_version": 1,
+  "posts": [
+    {
+      "post_id": "p-1001",
+      "author": {
+        "display_name": "Ada Lovelace",
+        "handle": "ada",
+        "avatar_url": "https://example.invalid/avatars/ada.png"
+      },
+      "body": "The engine weaves algebraic patterns.",
+      "published_at": "2026-07-14T09:30:00Z",
+      "category": "engineering",
+      "attachments": [
+        {
+          "kind": "image",
+          "url": "https://example.invalid/media/loom.png",
+          "caption": "A jacquard loom"
+        }
+      ]
+    },
+    {
+      "post_id": "p-1002",
+      "author": {
+        "display_name": "Grace Hopper",
+        "handle": "grace",
+        "avatar_url": "https://example.invalid/avatars/grace.png"
+      },
+      "body": "It is easier to ask forgiveness than permission.",
+      "published_at": 1784021460,
+      "category": "operations",
+      "attachments": []
+    }
+  ]
+}

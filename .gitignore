@@ -1,6 +1,49 @@
+# SwiftPM build products. Every package in this repo writes its own .build,
+# including the ones nested under modules/, projects/, and drills/.
 .build/
 .swiftpm/
-.DS_Store
-*.xcuserstate
-xcuserdata/
+Package.resolved
+.netrc
+
+# Xcode
 DerivedData/
+*.xcuserstate
+*.xcuserdatad/
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Xcode project cruft that only appears once chapters 13 and 14 open in Xcode
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.playground/playground.xcworkspace/
+
+# Swift and clang module caches
+*.swiftmodule/
+ModuleCache.noindex/
+timeline.xctimeline
+
+# Simulator and instruments output
+*.trace
+
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Editors
+.vscode/
+*.swp
+*~
+
+# Local scratch that must never reach a commit. Solutions live on the
+# solutions branch, never in an ignored file on main.
+scratch/
+*.local

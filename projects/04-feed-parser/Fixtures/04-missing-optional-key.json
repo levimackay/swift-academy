@@ -1,0 +1,16 @@
+{
+  "feed_title": "Field Notes",
+  "feed_version": 1,
+  "posts": [
+    {
+      "post_id": "p-4001",
+      "author": {
+        "display_name": "Ada Lovelace",
+        "handle": "ada"
+      },
+      "body": "No avatar_url key at all, and no attachments key either.",
+      "published_at": "2026-07-14T09:30:00Z",
+      "category": "engineering"
+    }
+  ]
+}

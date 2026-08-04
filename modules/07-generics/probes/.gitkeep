@@ -1,0 +1,3 @@
+# An empty directory does not survive a clone, and the canonical tree in
+# docs/how-this-repo-works.md is a promise about what a fresh clone contains.
+# This file goes away when the chapter's first probe lands here.

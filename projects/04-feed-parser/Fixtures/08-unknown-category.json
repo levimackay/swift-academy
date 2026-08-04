@@ -1,0 +1,27 @@
+{
+  "feed_title": "Field Notes",
+  "feed_version": 1,
+  "posts": [
+    {
+      "post_id": "p-8001",
+      "author": { "display_name": "Ada Lovelace", "handle": "ada" },
+      "body": "A category this app has never heard of.",
+      "published_at": "2026-07-14T09:30:00Z",
+      "category": "quantum_basketry"
+    },
+    {
+      "post_id": "p-8002",
+      "author": { "display_name": "Ada Lovelace", "handle": "ada" },
+      "body": "A different unknown category, so the two must not compare equal.",
+      "published_at": "2026-07-14T09:31:00Z",
+      "category": "underwater_forestry"
+    },
+    {
+      "post_id": "p-8003",
+      "author": { "display_name": "Ada Lovelace", "handle": "ada" },
+      "body": "A known one, so the fixture proves both paths at once.",
+      "published_at": "2026-07-14T09:32:00Z",
+      "category": "engineering"
+    }
+  ]
+}

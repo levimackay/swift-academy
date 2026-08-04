@@ -1,0 +1,27 @@
+{
+  "feed_title": "Field Notes",
+  "feed_version": 1,
+  "posts": [
+    {
+      "post_id": "p-6001",
+      "author": { "display_name": "Ada Lovelace", "handle": "ada" },
+      "body": "Zulu time.",
+      "published_at": "2026-07-14T09:30:00Z",
+      "category": "engineering"
+    },
+    {
+      "post_id": "p-6002",
+      "author": { "display_name": "Ada Lovelace", "handle": "ada" },
+      "body": "The same instant, written with a positive offset.",
+      "published_at": "2026-07-14T11:30:00+02:00",
+      "category": "engineering"
+    },
+    {
+      "post_id": "p-6003",
+      "author": { "display_name": "Ada Lovelace", "handle": "ada" },
+      "body": "The same instant again, with a negative offset.",
+      "published_at": "2026-07-14T05:30:00-04:00",
+      "category": "engineering"
+    }
+  ]
+}

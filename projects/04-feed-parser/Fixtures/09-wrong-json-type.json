@@ -1,0 +1,13 @@
+{
+  "feed_title": "Field Notes",
+  "feed_version": 1,
+  "posts": [
+    {
+      "post_id": 9001,
+      "author": { "display_name": "Ada Lovelace", "handle": "ada" },
+      "body": "post_id is a number here, and it is declared as a string.",
+      "published_at": "2026-07-14T09:30:00Z",
+      "category": "engineering"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "feed_title": "Field Notes",
+  "feed_version": 1,
+  "posts": [
+    {
+      "post_id": "p-7001",
+      "author": { "display_name": "Grace Hopper", "handle": "grace" },
+      "body": "Unix epoch seconds as a JSON number.",
+      "published_at": 1784021400,
+      "category": "operations"
+    },
+    {
+      "post_id": "p-7002",
+      "author": { "display_name": "Grace Hopper", "handle": "grace" },
+      "body": "The same instant as p-7001, written as ISO 8601.",
+      "published_at": "2026-07-14T09:30:00Z",
+      "category": "operations"
+    }
+  ]
+}

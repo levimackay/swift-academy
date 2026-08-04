@@ -1,0 +1,15 @@
+# Normalize line endings so a diagnostic pasted from a terminal always
+# diffs cleanly.
+* text=auto eol=lf
+
+*.swift   text diff=swift
+*.md      text
+*.yml     text
+*.json    text
+Makefile  text
+*.sh      text eol=lf
+
+# Generated or vendored content that should not count toward language stats
+# or show up expanded in a pull request.
+*.json linguist-language=JSON
+projects/04-feed-parser/Fixtures/** linguist-generated=true
