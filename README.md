@@ -393,4 +393,4 @@ named in the chapter's `verified:` line before it ships.
 
 See [LICENSE](LICENSE).
 
-**Last updated:** 2026-08-05 09:25 PDT
+**Last updated:** 2026-08-05 19:46 PDT
