@@ -15,7 +15,7 @@
 /// otherwise. A nickname of `""` counts as absent.
 func displayName(for nickname: String?, fallback: String) -> String {
     // TODO: replace this.
-    return ""
+    return nickname ?? fallback
 }
 
 // MARK: - 2. firstInitial(of:)
