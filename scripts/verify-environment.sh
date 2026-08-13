@@ -52,7 +52,14 @@ else
     SWIFT_OK=1
     SWIFT_VERSION_LINE="$(swift --version 2>&1 | head -n 1)"
     SWIFT_TARGET_LINE="$(swift --version 2>&1 | grep -i '^Target:' | head -n 1)"
-    SWIFT_SEMVER="$(printf '%s' "$SWIFT_VERSION_LINE" | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -n 1)"
+    # Anchor on the "Swift version" phrase rather than taking the first
+    # number on the line. Current toolchains print the driver version ahead
+    # of the Swift version on the same line ("swift-driver version: 1.148.6
+    # Apple Swift version 6.3.3 (...)"), so the first number read as 1.148
+    # and this reported a brand new Xcode as too old. The phrase is in both
+    # the Apple and the open source banners.
+    SWIFT_SEMVER="$(swift --version 2>&1 | sed -n 's/.*Swift version \([0-9][0-9.]*\).*/\1/p' | head -n 1)"
+    SWIFT_SEMVER="${SWIFT_SEMVER%.}"
     SWIFT_MAJOR="${SWIFT_SEMVER%%.*}"
     SWIFT_REST="${SWIFT_SEMVER#*.}"
     SWIFT_MINOR="${SWIFT_REST%%.*}"
