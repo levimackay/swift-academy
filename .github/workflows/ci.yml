@@ -74,7 +74,17 @@ jobs:
         run: |
           set -euo pipefail
           swift --version
-          have="$(swift --version 2>&1 | grep -oE '[0-9]+\.[0-9]+' | head -n 1)"
+          # Anchor on the "Swift version" phrase, not on the first number in
+          # the output. Current toolchains lead with the driver version on the
+          # same line ("swift-driver version: 1.148.6 Apple Swift version
+          # 6.3.3 (...)"), so a bare first-number grep read 1.148 and failed
+          # this gate on a runner that had Swift 6.3.3 installed. The phrase
+          # appears in both the Apple and the open source banners.
+          have="$(swift --version 2>&1 | sed -n 's/.*Swift version \([0-9][0-9.]*\).*/\1/p' | head -n 1)"
+          if [ -z "$have" ]; then
+            echo "Could not read a version out of 'swift --version'." >&2
+            exit 1
+          fi
           want="${REQUIRED_SWIFT}"
           lowest="$(printf '%s\n%s\n' "$have" "$want" | sort -V | head -n 1)"
           if [ "$lowest" != "$want" ]; then
