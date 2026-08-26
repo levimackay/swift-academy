@@ -53,8 +53,8 @@ print("LoudPin the value  \(MemoryLayout<LoudPin>.size) bytes")
 print("any Marker the box \(MemoryLayout<any Marker>.size) bytes")
 
 // The fix, when you wanted the type's version to win: move the member into
-// the protocol body so it becomes a requirement. Uncommenting the line below
-// changes two of the lines above, and predicting which two before you run it
-// is the exercise.
+// the protocol body so it becomes a requirement. Replacing the declaration at
+// the top of this file with the line below changes two of the lines above,
+// and predicting which two before you run it is the exercise.
 //
 // protocol Marker { var tint: String { get }; var caption: String { get } }

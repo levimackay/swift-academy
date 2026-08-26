@@ -35,9 +35,9 @@ than a stream: a stable position, published as an associated type named
 
 | Type | Index and Element | What that buys, and what it costs |
 |---|---|---|
-| `Array` | `Int` from zero; what you stored | O(1) subscript and append; O(n) to search or remove in the middle |
+| `Array` | `Int` from zero; what you stored | O(1) subscript and amortized O(1) append; O(n) to search or remove in the middle |
 | `Dictionary` | opaque index; a `(key, value)` pair | O(1) lookup by a `Hashable` key; no order, and iteration order changes per run |
-| `Set` | opaque index; the member | O(1) membership and set algebra; no order, no duplicates, `Hashable` required |
+| `Set` | opaque index; the member | O(1) membership, and set algebra in linear time; no order, no duplicates, `Hashable` required |
 
 All three are value types over chapter 03's copy on write, so `let` freezes
 the collection and not merely the binding, and a copy costs nothing until
@@ -278,7 +278,7 @@ Not required to advance. Skipping all of it costs you nothing.
 - [ ] I contributed this chapter's four drills to `drills/`
 - [ ] I can explain the three concepts in the front matter out loud, no notes
 - [ ] No force unwrap and no `Array(` over a `String` survives in my solutions:
-      `grep -nE '[A-Za-z_)\]]!|Array\(' modules/06-collections/exercises/*.swift`
+      `grep -nE '[]A-Za-z_)]!|Array\(' modules/06-collections/exercises/*.swift`
       prints nothing
 
 This chapter consumes `Sequence` and `Collection`; writing your own

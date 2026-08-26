@@ -33,7 +33,9 @@ let probe: any Signal = Burst(a: 1, b: 2, c: 3, d: 4)
 print(typeSeen(probe))                                           // 2
 
 // 3. Two functions, the same declared return type, the same body shape.
-//    Does the type checker consider the two results the same type?
+//    This print compares their dynamic types. Predict it, then predict
+//    whether the type checker lets you assign one result to a variable
+//    holding the other.
 //
 // PREDICTION:
 func hiddenA() -> some Signal { Blip(raw: 1) }

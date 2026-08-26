@@ -40,7 +40,7 @@ row("Wide", MemoryLayout<Wide>.size, MemoryLayout<Wide>.stride)
 print("boxed values")
 row("any Sample", MemoryLayout<any Sample>.size, MemoryLayout<any Sample>.stride)
 row("any Sample & Stamped", MemoryLayout<any Sample & Stamped>.size, MemoryLayout<any Sample & Stamped>.stride)
-row("[any Sample] element", MemoryLayout<[any Sample]>.size, MemoryLayout<[any Sample]>.stride)
+row("[any Sample], the array", MemoryLayout<[any Sample]>.size, MemoryLayout<[any Sample]>.stride)
 
 print("word size on this target: \(MemoryLayout<Int>.size)")
 print("Small fits inline. Wide is \(MemoryLayout<Wide>.size) bytes, which is more")

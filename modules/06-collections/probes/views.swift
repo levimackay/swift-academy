@@ -5,7 +5,7 @@
 //
 //     make probe CH=06 P=views
 //
-// The string is a five character name, a space, and one family emoji built
+// The string is a four character name, a space, and one family emoji built
 // from three people joined by two zero width joiners.
 
 let name = "Levi \u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}"

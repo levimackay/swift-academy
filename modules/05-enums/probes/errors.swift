@@ -130,9 +130,9 @@
 // error: recursive enum 'Segment' is not marked 'indirect'
 // note: cycle beginning here: (Segment, Segment) -> (.0: Segment)
 
-// 9. Equality is synthesized for a payload free enum and not for one with
-//    associated values, because the compiler will not assume the payloads
-//    are comparable.
+// 9. Equality arrives without a declaration for a payload free enum and not
+//    for one with associated values, because the compiler will not assume
+//    the payloads are comparable.
 //
 // enum Gauge {
 //     case dry

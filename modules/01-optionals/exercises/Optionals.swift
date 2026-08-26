@@ -3,7 +3,7 @@
 // Every function below returns a compiling wrong value so that the suite
 // runs and reports a score instead of aborting. Replace each body.
 //
-//   swift test --filter 01
+//   swift test --filter Chapter01Tests
 //
 // House rule for this chapter, checked by the last item of the Done when
 // list: no `!` anywhere in this directory. Force unwrap has its own probe,

@@ -107,8 +107,8 @@ func drain<F: Feed>(_ feed: F) -> [F.Payload] { [] }  // fully static
 let ints: any Feed<Int> = Counter()                   // boxed, Payload pinned
 ```
 
-Without the `<Payload>` on the declaration, `any Feed<Int>` does not parse and
-`any Feed` gives you a box whose `next()` returns `Any`. With it, the box
+Without the `<Payload>` on the declaration, `any Feed<Int>` does not compile and
+`any Feed` gives you a box whose `next()` returns `Any?`. With it, the box
 keeps one fact and stays useful.
 
 You rarely need the box, because passing an existential into a generic
@@ -311,7 +311,7 @@ Not required to advance. Skipping all of it costs you nothing.
 - [ ] I contributed this chapter's four drills to `drills/`
 - [ ] I can explain the three concepts in the front matter out loud, no notes
 - [ ] No existential survives in my solutions:
-      `grep -n 'any ' modules/07-generics/exercises/*.swift` prints nothing
+      `grep -nE 'any [A-Z]' modules/07-generics/exercises/*.swift` prints nothing
 
 This chapter does not cover generic constraints that involve concurrency,
 where `Sendable` becomes another thing a parameter has to promise. That is

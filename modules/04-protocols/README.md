@@ -259,8 +259,9 @@ Nothing here has a committed answer.
 1. A protocol declares `var name: String { get }`. A conforming struct
    declares `var name: String` as a stored `var`. Does that satisfy a `get`
    only requirement, and does the reverse hold?
-2. Uncomment the last line of `probes/dispatch.swift` so `caption` becomes a
-   requirement, and predict which of the five dispatch lines it prints change.
+2. Replace the `Marker` declaration at the top of `probes/dispatch.swift`
+   with its commented last line so `caption` becomes a requirement, and
+   predict which of the five dispatch lines it prints change.
 3. `extension Array: Readout where Element: Readout`. Predict whether
    `[[Barometer]]` is a `Readout`, and say why in one sentence.
 4. Predict `MemoryLayout<any Readout>.size` and

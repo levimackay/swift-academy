@@ -40,11 +40,12 @@ let boxed: any Pulse = Wave(a: 1, b: 2, c: 3, d: 4)
 print("opened as   ", nameOfParameter(boxed))
 print("dynamic name", nameAtRuntime(boxed))
 
-// Opaque return types keep identity across calls, which is the whole
-// difference between `some` and `any` in one line.
+// Opaque return types keep identity across calls to one function, which is
+// the whole difference between `some` and `any` in one line. Two functions
+// are two opaque types, even when the dynamic type behind both is the same.
 func hidden() -> some Pulse { Tick(ticks: 1) }
 func alsoHidden() -> some Pulse { Tick(ticks: 2) }
-print("same opaque type twice:", type(of: hidden()) == type(of: alsoHidden()))
+print("same dynamic type behind both:", type(of: hidden()) == type(of: alsoHidden()))
 
 let mixed: [any Pulse] = [Tick(ticks: 1), Wave(a: 1, b: 1, c: 1, d: 1)]
 print("distinct dynamic types in the array:",

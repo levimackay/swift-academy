@@ -55,7 +55,8 @@ print("type of notLazyAnyMore:  \(type(of: notLazyAnyMore))")
 //
 // An infinite source is the case where lazy is not an optimisation but a
 // correctness requirement. Drop the .lazy from the next line and the program
-// does not run slower, it never finishes.
+// does not run slower, it never reaches `first`: the eager map cubes an
+// infinite sequence and traps on integer overflow within seconds.
 let firstCubeOverAThousand = sequence(first: 1) { $0 + 1 }
     .lazy
     .map { $0 * $0 * $0 }

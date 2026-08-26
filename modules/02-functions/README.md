@@ -295,7 +295,7 @@ Not required to advance. Skipping all of it costs you nothing.
 - [ ] I contributed this chapter's four drills to `drills/`
 - [ ] I can explain the three concepts in the front matter out loud, no notes
 - [ ] No force unwrap survives in my solutions:
-      `grep -nE '[A-Za-z_)\]]!' modules/02-functions/exercises/*.swift` prints nothing
+      `grep -nE '[]A-Za-z_)]!' modules/02-functions/exercises/*.swift` prints nothing
 
 Capture lists, `[weak self]`, and the reference cycle that makes them
 necessary are chapter 10. They are only visible once a type has identity, and

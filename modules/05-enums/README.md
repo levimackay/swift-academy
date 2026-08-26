@@ -215,7 +215,7 @@ blocks. These are the eight worth memorising.
 | `error: cannot find 'symbol' in scope` | a bare name in a pattern is matched against, not bound | write `let symbol` inside the pattern |
 | `error: enum with raw type cannot have cases with arguments` | raw values and payloads are exclusive | drop the raw type, or move the data into a payload |
 | `error: recursive enum 'Segment' is not marked 'indirect'` | the case stores the enum, so its size depends on itself | `indirect enum`, or `indirect case` on that one |
-| `error: binary operator '==' cannot be applied to two 'Gauge' operands` | equality is synthesized for payload free enums only | declare `: Equatable` once every payload is |
+| `error: binary operator '==' cannot be applied to two 'Gauge' operands` | equality is synthesized without a declaration for payload free enums only | declare `: Equatable` once every payload is |
 
 ## Exercises
 
@@ -293,7 +293,7 @@ Not required to advance. Skipping all of it costs you nothing.
 - [ ] I contributed this chapter's four drills to `drills/`
 - [ ] I can explain the three concepts in the front matter out loud, no notes
 - [ ] No `default` survives in my solutions:
-      `grep -n 'default' modules/05-enums/exercises/*.swift` prints nothing
+      `grep -n 'default:' modules/05-enums/exercises/*.swift` prints nothing
 
 This chapter does not cover what happens when the case list is not yours to
 close: decoding an enum from JSON, and keeping the raw value of a case you

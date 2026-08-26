@@ -53,8 +53,8 @@ print(here.x, there.x)      // 1 99
 ```
 
 `there` is not a view onto `here`. Assignment copied, and so does passing to a
-function, returning from one, storing into an array, and capturing in a
-closure. There is no operator that undoes this, which is the entire guarantee.
+function, returning from one, storing into an array, and naming it in a
+closure's capture list. There is no operator that undoes this, which is the entire guarantee.
 
 `let` on a struct freezes the value, not just the name. That is stronger than
 it sounds, because it also withdraws every method that would write.
@@ -100,8 +100,8 @@ make probe CH=03 P=cow
 
 A value has no identity, only contents. Two `Coordinate(x: 1, y: 1)` are the
 same coordinate, and asking which one is a category error, which is why `===`
-refuses to compile on a struct. `Equatable` and `Hashable` are synthesized as
-soon as every stored property conforms.
+refuses to compile on a struct. `Equatable` and `Hashable` are synthesized, once
+declared, as soon as every stored property conforms.
 
 ```swift
 struct Tag: Hashable {

@@ -115,8 +115,8 @@ let port: Int? = Int("8080")
 ```
 
 An implicitly unwrapped optional is not a third type. `String!` is
-`Optional<String>` carrying an instruction to insert a force unwrap at every
-use, so the trap fires far from the line that made the bad assumption. It
+`Optional<String>` carrying an instruction to insert a force unwrap wherever a
+`String` is required, so the trap fires far from the line that made the bad assumption. It
 exists for two phase initialization and for imported Objective C APIs that
 carry no nullability annotation. Outside those, `String?` unwrapped once is
 strictly better.
@@ -303,7 +303,7 @@ Not required to advance. Skipping all of it costs you nothing.
 - [ ] I contributed this chapter's four drills to `drills/`
 - [ ] I can explain the three concepts in the front matter out loud, no notes
 - [ ] No force unwrap survives in my solutions:
-      `grep -nE '[A-Za-z_)\]]!' modules/01-optionals/exercises/*.swift` prints nothing
+      `grep -nE '[]A-Za-z_)]!' modules/01-optionals/exercises/*.swift` prints nothing
 
 This chapter does not cover the other two ways Swift models failure, `throws`
 and `Result`, or how to choose between all three. That decision belongs to

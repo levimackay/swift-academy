@@ -17,7 +17,7 @@ let port: Int? = Int("8080")
 print("a force unwrap that holds:", port!)
 
 // Implicitly unwrapped optional. `handle` has type Optional<String>, and
-// the ! moves from the declaration to every single use of it.
+// the ! moves from the declaration to each use that needs a `String`.
 var handle: String! = "open"
 print("an implicit one that holds:", handle.count)
 
