@@ -108,8 +108,9 @@ struct is constructed. SwiftUI keeps the first result and throws the rest
 away.
 
 So "the initializer runs once" is the folk version and it is wrong. What runs
-once is the storage allocation. `Cart()` runs on every rebuild, and every
-`Cart` after the first is built and immediately discarded. That is why an
+once is the storage allocation. `Cart()` runs every time the struct is
+constructed, and every `Cart` after the first is built and immediately
+discarded. That is why an
 expensive or side effecting initializer inside `@State` is a real bug, and it
 is what checkpoint question 2 is asking you to count.
 
@@ -248,7 +249,7 @@ diagnostic as drift the next time you run it. Uncomment one block at a time
 and read it yourself.
 
 ```bash
-make probe CH=13 P=diagnostics
+make probe CH=13 P=errors
 ```
 
 | Diagnostic | What it means | Fix |

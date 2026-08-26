@@ -1,9 +1,5 @@
 # Chapter 14 preview app
 
-Chapter 14 has not been written yet. This page is the shape its preview app
-will take, written now so that the canonical tree is real on a fresh clone and
-so the chapter's author has the constraint in front of them.
-
 Most of chapter 14 runs headless, for the same reason chapter 13's does: a
 route is a value, a router is a pure function from a value to a screen name,
 and a model with an injected dependency is ordinary Swift. Verified: an

@@ -296,7 +296,7 @@ Stubs are in `exercises/`, the suite is `swift test --filter Chapter14Tests`.
    its repeats, and land at the root when the bytes are not yours.
 2. `AppRouter`. Push, pop, present, dismiss, and deep link as edits to one
    value. Popping at the root is the interesting case.
-3. `EntryList.reload()`. An injected closure, four states, no network.
+3. `EntryList.reload()`. An injected closure, five states, no network.
 4. `NoteLibrary`. Filing, archiving, and the query a screen renders, over an
    injected storage protocol.
 5. `RowLabel.spoken(for:dueInDays:)`. The sentence VoiceOver reads.

@@ -11,7 +11,7 @@ public struct Entry: Equatable, Sendable, Identifiable {
     }
 }
 
-/// Four states, not a `Bool` and an optional array. Two of the four are the
+/// Five states, not a `Bool` and an optional array. Two of the five are the
 /// ones people collapse into one and then cannot render differently: a
 /// successful load that found nothing is not the same screen as a load that
 /// has not happened, and neither is a failure.

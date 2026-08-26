@@ -16,7 +16,7 @@ func line(_ number: Int, _ text: String) {
     print("\(number). \(text)")
 }
 
-// 1. A Date, encoded by a decoder you did not configure.
+// 1. A Date, encoded by an encoder you did not configure.
 //
 // PREDICTION:
 struct Marker: Codable {

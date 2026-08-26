@@ -1,4 +1,4 @@
-// Three snippets. Write your prediction in the comment above each one
+// Four snippets. Write your prediction in the comment above each one
 // before you run the file. The toolchain is the answer key, and there is
 // no answer key anywhere in this repository.
 //

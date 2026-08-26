@@ -163,7 +163,7 @@ struct DashboardTests {
 @Suite("11 nonisolated tag")
 struct DashboardTagTests {
     /// This suite is deliberately not `@MainActor`. If `tag()` reads
-    /// anything the main actor owns, this file stops compiling.
+    /// anything the main actor owns, the exercise file stops compiling.
     @Test("the tag is readable off the main actor with no await")
     func tagNeedsNoIsolation() async {
         let dashboard = await Dashboard(deviceID: "kiosk-2")

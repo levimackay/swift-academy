@@ -56,8 +56,9 @@ final class Tripmeter { var miles = 0 }                            // never
 A class is the opposite case. Two references to one `Tripmeter` are two names
 for one mutable box, so sending it hands a second domain a write it cannot
 order against yours. A class qualifies only by being `final` with every stored
-property immutable and `Sendable`, or by taking the `@unchecked Sendable`
-escape hatch, which is you promising a lock the compiler cannot see. Closures
+property immutable and `Sendable`, by being isolated to a global actor such
+as `@MainActor`, or by taking the `@unchecked Sendable` escape hatch, which is
+you promising a lock the compiler cannot see. Closures
 carry the rule under a different spelling: a `@Sendable` closure may capture
 `Sendable` values only.
 

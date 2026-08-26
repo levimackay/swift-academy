@@ -2,7 +2,7 @@
 // declarations, the types above them, or the test file: the suite in
 // ../tests is what grades you and it calls these exact signatures.
 //
-// Run: swift test --filter 10
+// Run: swift test --filter Chapter10Tests
 
 // MARK: - 1. Identity, not equality
 
