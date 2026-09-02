@@ -9,9 +9,12 @@ exists on `main`. You type every line.
 
 **Written so far: all fourteen chapters.** Every chapter ships its prose, its
 probes, its exercise stubs, and its failing test suite, and all fourteen build
-and test on the Command Line Tools. Only the `preview-app/` work in chapters
-13 and 14 needs full Xcode and the simulator. Projects 01 and 05 ship their
-failing test suites; the other four ship specs and scaffolds. This repository
+and test on the Command Line Tools. The preview-app work in chapters 13 and
+14 and the App targets in projects 02 and 06 need full Xcode and the
+simulator; everything else builds and tests on the Command Line Tools.
+Projects 01 and 05 ship their failing test suites; projects 03, 04, and 06
+ship specs and scaffolds; project 02 ships a spec only, since its Xcode
+project is deliberately not committed. This repository
 is authored and worked through at the same time, so it is always partly built,
 and [PROGRESS.md](PROGRESS.md) has a column for exactly this. Say so here
 rather than let you find out at chapter 02.
